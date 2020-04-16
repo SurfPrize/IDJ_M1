@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FateDB
 {
-    enum Servant_Class
+    public enum Servant_Class
     {
         SABER,
         LANCER,
@@ -20,18 +20,21 @@ namespace FateDB
         MOON_CANCER,
         SHIELDER,
         ALTER_EGO,
-        FOREIGNER
+        FOREIGNER,
+        BEAST,
+        ERROR
     }
 
-    enum alignment
+    public enum Alignment
     {
         GOOD,
         BALANCED,
         INSANE,
         EVIL,
-        SUMMER
+        SUMMER,
+        BEAST
     }
-    enum aligment2
+    public enum Aligment2
     {
         CHAOTIC,
         NEUTRAL,

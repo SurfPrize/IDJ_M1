@@ -11,8 +11,7 @@ namespace FateDB
         
         static void Main(string[] args)
         {
-            TabletoList.getList();
-
+            
             Console.Write("Enter to Exit");
             Console.ReadLine();
         }
