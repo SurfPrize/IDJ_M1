@@ -6,19 +6,21 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FateDB.Database
+namespace FateDB
 {
-    internal static class ThorneOfHeroes
+    public static class ThroneOfHeroes
     {
-        private static List<Servant> _all_servants;
-        private static List<Servant> _summoned_servants;
+        private static List<Servant> _all_servants=new List<Servant>();
+        private static List<Servant> _summoned_servants = new List<Servant>();
         public static List<Servant> All_servants => _all_servants;
         public static List<Servant> Summoned_servants => _summoned_servants;
+        private static bool _allow_insert = false;
+        public static bool Allow_insert => _allow_insert;
 
-
-
+        
         public static void UpdateList()
         {
+            _allow_insert = true;
             WebClient webClient = new WebClient();
             string page = webClient.DownloadString("https://grandorder.wiki/Servant_List");
             string page2 = webClient.DownloadString("https://grandorder.wiki/Servants_by_Profile");
@@ -62,7 +64,6 @@ namespace FateDB.Database
                 {
                     foreach (HtmlNode roww in ServantProfiles)
                     {
-
                         string[] tent = roww.SelectSingleNode("td[1]").SelectSingleNode("a").GetAttributeValue("title", "rip").Split();
                         foreach (string este in tent)
                         {
@@ -102,7 +103,7 @@ namespace FateDB.Database
                     align = Alignment.BEAST;
                     align2 = Aligment2.NEUTRAL;
                 }
-                Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2);
+                Servant novo=new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2);
                 _all_servants.Add(novo);
             }
 
@@ -166,11 +167,25 @@ namespace FateDB.Database
                 return result;
 
             }
+
+            _allow_insert = false;
         }
 
         public static Servant Summon(int id)
         {
-            return All_servants.Find(x=> x.Id==id);
+            if (All_servants.Count == 0)
+            {
+                UpdateList();
+            }
+            if (id > All_servants.Count())
+            {
+                id -= All_servants.Count();
+            }
+            if (id <= 0)
+            {
+                id += All_servants.Count();
+            }
+            return All_servants.Find(x => x.Id == id);
         }
     }
 }

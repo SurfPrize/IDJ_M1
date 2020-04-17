@@ -1,10 +1,11 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FateDB.Database
+namespace FateDB
 {
     public class Servant
     {
@@ -17,7 +18,7 @@ namespace FateDB.Database
         private int _maxatk;
         private int _currentatk;
         private int _currenthp;
-        private int _lvl=1;
+        private int _lvl = 1;
         private int _minhp;
         private int _maxhp;
         private string _origin;
@@ -28,7 +29,7 @@ namespace FateDB.Database
         private Alignment _aligment;
         private Aligment2 _aligment2;
         private int _id;
-        public int Id=>_id;
+        public int Id => _id;
         public int Maxlvl;
 
 
@@ -75,32 +76,36 @@ namespace FateDB.Database
         public Aligment2 Aligment2 => _aligment2;
         protected int teste;
 
-        internal Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2)
+        public Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2)
         {
-            this.id = id;
-            _name = name;
-            _class = classe;
-            _rarity = rarity;
-            _minatk = min_atk;
-            _maxatk = max_atk;
-            _minhp = min_hp;
-            _maxhp = max_hp;
-            _origin = origin;
-            _region = region;
-            _height = height;
-            _weight = weight;
-            _gender = gender;
-            _aligment = aligment;
-            _aligment2 = aligment2;
-            Maxlvl = 100;
-            Lvl = 1;
+            if (ThroneOfHeroes.Allow_insert)
+            {
+                _id = id;
+                _name = name;
+                _class = classe;
+                _rarity = rarity;
+                _minatk = min_atk;
+                _maxatk = max_atk;
+                _minhp = min_hp;
+                _maxhp = max_hp;
+                _origin = origin;
+                _region = region;
+                _height = height;
+                _weight = weight;
+                _gender = gender;
+                _aligment = aligment;
+                _aligment2 = aligment2;
+                Maxlvl = 100;
+                Lvl = 1;
+            }
+            else
+            {
+                Console.WriteLine("DENIED");
+                ThroneOfHeroes.Summon(id);
+            }
 
         }
 
-        public Servant(int id)
-        {
-
-        }
 
         public override string ToString()
         {
