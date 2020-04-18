@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace FateDB
 {
@@ -14,13 +15,11 @@ namespace FateDB
         private string _name;
         private Servant_Class _class;
         private int _rarity;
-        private int _minatk;
-        private int _maxatk;
+
         private int _currentatk;
         private int _currenthp;
         private int _lvl = 1;
-        private int _minhp;
-        private int _maxhp;
+
         private string _origin;
         private string _region;
         private string _height;
@@ -29,7 +28,7 @@ namespace FateDB
         private Alignment _aligment;
         private Aligment2 _aligment2;
         private int _id;
-        public int Id => _id;
+
         public int Maxlvl;
 
 
@@ -45,7 +44,7 @@ namespace FateDB
             }
         }
 
-        public int hp { get; set; }
+        public int Hp { get; set; }
         public int Lvl
         {
             get => _lvl;
@@ -62,19 +61,41 @@ namespace FateDB
             }
         }
 
+        [XmlElement("ID")]
+        public int Id => _id;
+        [XmlElement("Name")]
         public string Name => _name;
+
+        [XmlElement("Class")]
         public Servant_Class Class => _class;
+
+        [XmlElement("Rarity")]
         public int Rarity => _rarity;
-        public int atklvl => _currentatk;
-        public int hplvl => _currenthp;
+        public int Atklvl => _currentatk;
+        public int Hplvl => _currenthp;
+        [XmlElement("Mininum Attack")]
+        private int _minatk;
+        [XmlElement("Maximum Attack")]
+        private int _maxatk;
+        [XmlElement("Mininum HP")]
+        private int _minhp;
+        [XmlElement("Maximum HP")]
+        private int _maxhp;
+
+        [XmlElement("Origin")]
         public string Origin => _origin;
+        [XmlElement("Region")]
         public string Region => _region;
+        [XmlElement("Height")]
         public string Height => _height;
+        [XmlElement("Weight")]
         public string Weight => _weight;
+        [XmlElement("Gender")]
         public string Gender => _gender;
+        [XmlElement("Aligment")]
         public Alignment Aligment => _aligment;
+        [XmlElement("Aligment2")]
         public Aligment2 Aligment2 => _aligment2;
-        protected int teste;
 
         public Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2)
         {
@@ -105,7 +126,10 @@ namespace FateDB
             }
 
         }
+        public Servant()
+        {
 
+        }
 
         public override string ToString()
         {

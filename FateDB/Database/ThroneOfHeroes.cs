@@ -1,23 +1,31 @@
-﻿using HtmlAgilityPack;
+﻿using FateDB.Database;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace FateDB
 {
+   
     public static class ThroneOfHeroes
     {
-        private static List<Servant> _all_servants=new List<Servant>();
+        private static string path = AppDomain.CurrentDomain.BaseDirectory;
+
         private static List<Servant> _summoned_servants = new List<Servant>();
+        private static List<Servant> _all_servants = new List<Servant>();
+        [XmlArray("ServantList")]
+        [XmlArrayItem("Servant")]
         public static List<Servant> All_servants => _all_servants;
         public static List<Servant> Summoned_servants => _summoned_servants;
         private static bool _allow_insert = false;
         public static bool Allow_insert => _allow_insert;
+        private static ServantContainer servant_base = ServantContainer.Load(path);
 
-        
+
         public static void UpdateList()
         {
             _allow_insert = true;
@@ -103,7 +111,7 @@ namespace FateDB
                     align = Alignment.BEAST;
                     align2 = Aligment2.NEUTRAL;
                 }
-                Servant novo=new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2);
+                Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2);
                 _all_servants.Add(novo);
             }
 
@@ -169,6 +177,7 @@ namespace FateDB
             }
 
             _allow_insert = false;
+            ServantContainer.Save(path);
         }
 
         public static Servant Summon(int id)
@@ -187,5 +196,7 @@ namespace FateDB
             }
             return All_servants.Find(x => x.Id == id);
         }
+
+
     }
 }

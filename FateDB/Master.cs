@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FateDB
 {
-    internal class Master
+    public class Master
     {
-        private string _name="NO NAME";
+        private string _name = "NO NAME";
         public string Name
         {
             get => _name; set
@@ -43,13 +43,13 @@ namespace FateDB
             string resultado;
             if (servant != null)
             {
-                resultado = Name + " Region:" + region + " \n " + Name+"'S SERVANT:" + servant.ToString();
+                resultado = Name + " Region:" + region + " \n " + Name + "'S SERVANT:" + servant.ToString();
             }
             else
             {
                 resultado = Name + " Region:" + region + " \n NO SERVANT";
             }
-            
+
             return resultado;
         }
 
