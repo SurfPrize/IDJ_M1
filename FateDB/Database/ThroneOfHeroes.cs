@@ -6,25 +6,23 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace FateDB
 {
-   
+
     public static class ThroneOfHeroes
     {
-        private static string path = AppDomain.CurrentDomain.BaseDirectory;
+
 
         private static List<Servant> _summoned_servants = new List<Servant>();
         private static List<Servant> _all_servants = new List<Servant>();
-        [XmlArray("ServantList")]
-        [XmlArrayItem("Servant")]
         public static List<Servant> All_servants => _all_servants;
         public static List<Servant> Summoned_servants => _summoned_servants;
         private static bool _allow_insert = false;
         public static bool Allow_insert => _allow_insert;
-        private static ServantContainer servant_base = ServantContainer.Load(path);
-
+        
 
         public static void UpdateList()
         {
@@ -34,7 +32,7 @@ namespace FateDB
             string page2 = webClient.DownloadString("https://grandorder.wiki/Servants_by_Profile");
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(page);
-            HtmlAgilityPack.HtmlDocument doc2 = new HtmlAgilityPack.HtmlDocument();
+            HtmlDocument doc2 = new HtmlDocument();
             doc2.LoadHtml(page2);
             doc2.OptionEmptyCollection = true;
 
@@ -84,11 +82,11 @@ namespace FateDB
                     }
                 }
 
-                string origin = "";
-                string region = "";
-                string height = "";
-                string weight = "";
-                string gender = "";
+                string origin = "unknown";
+                string region = "unknown";
+                string height = "unknown";
+                string weight = "unknown";
+                string gender = "unknown";
                 Alignment align = Alignment.BALANCED;
                 Aligment2 align2 = Aligment2.NEUTRAL;
                 if (profile != null)
@@ -102,10 +100,6 @@ namespace FateDB
                     align2 = find_alig2(profile.SelectSingleNode("td[7]").InnerText);
 
                 }
-                else
-                {
-                    origin = "unknown";
-                }
                 if (cl == Servant_Class.BEAST)
                 {
                     align = Alignment.BEAST;
@@ -114,14 +108,13 @@ namespace FateDB
                 Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2);
                 _all_servants.Add(novo);
             }
-
+            
 
             int getnum(string txt)
             {
                 return int.Parse(txt[0].ToString());
             }
-
-
+            
             Alignment find_alig(string txt)
             {
                 string[] allcaps = txt.ToUpper().Split();
@@ -177,7 +170,19 @@ namespace FateDB
             }
 
             _allow_insert = false;
-            ServantContainer.Save(path);
+            ServantContainer.Save();
+        }
+
+        public static void Loadfromfile()
+        {
+            XElement teste = ServantContainer.Load();
+            _all_servants.Clear();
+            foreach(XElement ola in teste.Elements())
+            {
+
+            }
+
+
         }
 
         public static Servant Summon(int id)

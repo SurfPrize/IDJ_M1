@@ -60,41 +60,30 @@ namespace FateDB
                 _currenthp = _minhp + (_maxatk / Maxlvl * value);
             }
         }
-
-        [XmlElement("ID")]
+        
         public int Id => _id;
-        [XmlElement("Name")]
         public string Name => _name;
-
-        [XmlElement("Class")]
+        
         public Servant_Class Class => _class;
-
-        [XmlElement("Rarity")]
+        
         public int Rarity => _rarity;
         public int Atklvl => _currentatk;
         public int Hplvl => _currenthp;
-        [XmlElement("Mininum Attack")]
         private int _minatk;
-        [XmlElement("Maximum Attack")]
         private int _maxatk;
-        [XmlElement("Mininum HP")]
         private int _minhp;
-        [XmlElement("Maximum HP")]
         private int _maxhp;
 
-        [XmlElement("Origin")]
+        public int Minatk => _minatk;
+        public int Maxatk => _maxatk;
+        public int Minhp => _minhp;
+        public int Maxhp => _maxhp;
         public string Origin => _origin;
-        [XmlElement("Region")]
         public string Region => _region;
-        [XmlElement("Height")]
         public string Height => _height;
-        [XmlElement("Weight")]
         public string Weight => _weight;
-        [XmlElement("Gender")]
         public string Gender => _gender;
-        [XmlElement("Aligment")]
         public Alignment Aligment => _aligment;
-        [XmlElement("Aligment2")]
         public Aligment2 Aligment2 => _aligment2;
 
         public Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2)
@@ -136,5 +125,7 @@ namespace FateDB
             string res = Name + " CLASS:" + Class + " " + Rarity + " STAR SERVANT" + " ORIGIN:" + Origin + " LVL:" + Lvl + " ATK:" + _currentatk + " HP:" + _currenthp + " HEIGHT:" + Height + " WEIGHT:" + Weight + " GENDER:" + Gender + " ALIGMENT:" + Aligment2 + " " + Aligment;
             return res.ToString();
         }
+
+
     }
 }

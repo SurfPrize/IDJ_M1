@@ -17,9 +17,9 @@ namespace FateDB
         BERSERKER,
         RULER,
         AVENGER,
-        MOON_CANCER,
+        MOONCANCER,
         SHIELDER,
-        ALTER_EGO,
+        ALTER,
         FOREIGNER,
         BEAST,
         ERROR
