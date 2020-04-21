@@ -2,6 +2,7 @@
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -88,25 +89,32 @@ namespace FateDB
             doc2.LoadHtml(page2);
             doc2.OptionEmptyCollection = true;
 
-
             List<HtmlNode> ServantStats = doc.DocumentNode.SelectSingleNode("//table[last()]").Descendants("tr").Skip(1).ToList();
             List<HtmlNode> ServantProfiles = doc2.DocumentNode.SelectSingleNode("//table").Descendants("tr").Skip(1).ToList();
 
             foreach (var row in ServantStats)
             {
+                
                 int id = int.Parse(row.SelectSingleNode("td[1]").InnerText.ToString());
                 string name = row.SelectSingleNode("td[3]").SelectSingleNode("a").GetAttributeValue("title", "rip");
-                Console.WriteLine(row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").Descendants("img").Single().GetAttributeValue("src", "unknown"));
                 Servant_Class cl = find_class(row.SelectSingleNode("td[4]").SelectSingleNode("div").SelectSingleNode("div").SelectSingleNode("img").GetAttributeValue("alt", "unknown"));
                 int rarity = getnum(row.SelectSingleNode("td[5]").InnerText.ToString());
                 int min_atk = int.Parse((row.SelectSingleNode("td[6]").InnerText.ToString()));
                 int max_atk = int.Parse((row.SelectSingleNode("td[7]").InnerText.ToString()));
                 int min_hp = int.Parse((row.SelectSingleNode("td[8]").InnerText.ToString()));
                 int max_hp = int.Parse((row.SelectSingleNode("td[9]").InnerText.ToString()));
+
+               string serv_page = webClient.DownloadString("https://grandorder.wiki"+row.SelectSingleNode("td[3]").SelectSingleNode("a").GetAttributeValue("href", "rip"));
+                HtmlDocument servanthtml= new HtmlDocument();
+                servanthtml.LoadHtml(serv_page);
+               // string skill1 = servanthtml.DocumentNode.SelectSingleNode("//div[@title='1st Skill']").Descendants("div").Count();
+                Console.WriteLine(servanthtml.DocumentNode.SelectSingleNode("//div[@title='1st Skill']").SelectNodes("div").Count());
+               
                 HtmlNode profile = null;
                 string[] tentativa2 = name.Split();
-
-                webClient.DownloadFile("https://grandorder.wiki" + row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").Descendants("img").Single().GetAttributeValue("src", "unknown"), ServantContainer.path + "/" + id + ".png");
+                if (!File.Exists(ServantContainer.path + "/" + id + ".png")) {
+                    webClient.DownloadFile("https://grandorder.wiki" + row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").Descendants("img").Single().GetAttributeValue("src", "unknown"), ServantContainer.path + "/" + id + ".png");
+                }
                 foreach (HtmlNode roww in ServantProfiles)
                 {
                     if (roww.SelectSingleNode("td[1]").SelectSingleNode("a").GetAttributeValue("title", "rip") == name)
@@ -169,8 +177,7 @@ namespace FateDB
                 return int.Parse(txt[0].ToString());
             }
 
-
-
+            
             _allow_insert = false;
             webClient.Dispose();
             ServantContainer.Save();
