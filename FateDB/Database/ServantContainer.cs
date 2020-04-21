@@ -12,12 +12,12 @@ namespace FateDB.Database
 {
     public class ServantContainer
     {
-        public static string path = @"C:\Users\Utilizador\Documents\FateDB\IDJ_M1\teste\meme.xml";
-
+        public static string path = @"C:\Users\Utilizador\Documents\FateDB\IDJ_M1\teste";
+        public static string dbname = @"\meme.xml";
         public static XElement Load()
         {
 
-            XElement servants = XElement.Load(path);
+            XElement servants = XElement.Load(path+dbname);
 
             return servants;
 
@@ -42,8 +42,7 @@ namespace FateDB.Database
                                                new XAttribute("Gender", x.Gender),
                                                new XAttribute("Aligment", x.Aligment),
                                                new XAttribute("Aligment2", x.Aligment2))));
-            Console.WriteLine(path);
-            xml.Save(path);
+            xml.Save(path+dbname);
         }
     }
 

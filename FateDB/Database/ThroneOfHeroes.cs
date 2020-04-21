@@ -96,7 +96,7 @@ namespace FateDB
             {
                 int id = int.Parse(row.SelectSingleNode("td[1]").InnerText.ToString());
                 string name = row.SelectSingleNode("td[3]").SelectSingleNode("a").GetAttributeValue("title", "rip");
-                Console.WriteLine(row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").ChildNodes.Count);
+                Console.WriteLine(row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").Descendants("img").Single().GetAttributeValue("src", "unknown"));
                 Servant_Class cl = find_class(row.SelectSingleNode("td[4]").SelectSingleNode("div").SelectSingleNode("div").SelectSingleNode("img").GetAttributeValue("alt", "unknown"));
                 int rarity = getnum(row.SelectSingleNode("td[5]").InnerText.ToString());
                 int min_atk = int.Parse((row.SelectSingleNode("td[6]").InnerText.ToString()));
@@ -105,8 +105,8 @@ namespace FateDB
                 int max_hp = int.Parse((row.SelectSingleNode("td[9]").InnerText.ToString()));
                 HtmlNode profile = null;
                 string[] tentativa2 = name.Split();
-                
-                //webClient.DownloadFile(row.SelectSingleNode("td[3]").SelectSingleNode("a").SelectSingleNode("img").ToString(),name);
+
+                webClient.DownloadFile("https://grandorder.wiki" + row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").Descendants("img").Single().GetAttributeValue("src", "unknown"), ServantContainer.path + "/" + id + ".png");
                 foreach (HtmlNode roww in ServantProfiles)
                 {
                     if (roww.SelectSingleNode("td[1]").SelectSingleNode("a").GetAttributeValue("title", "rip") == name)
@@ -172,6 +172,7 @@ namespace FateDB
 
 
             _allow_insert = false;
+            webClient.Dispose();
             ServantContainer.Save();
         }
 
