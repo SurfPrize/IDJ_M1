@@ -22,8 +22,60 @@ namespace FateDB
         public static List<Servant> Summoned_servants => _summoned_servants;
         private static bool _allow_insert = false;
         public static bool Allow_insert => _allow_insert;
-        
 
+        private static Alignment find_alig(string txt)
+        {
+            string[] allcaps = txt.ToUpper().Split();
+            string[] all = Servant_Class.GetNames(typeof(Alignment));
+            Alignment result = Alignment.BALANCED;
+            foreach (string este in all)
+            {
+                foreach (string teste in allcaps)
+                    if (teste == este)
+                    {
+                        Enum.TryParse(este, out result);
+                        return result;
+                    }
+            }
+            return result;
+
+        }
+
+        private static Aligment2 find_alig2(string txt)
+        {
+            string[] allcaps = txt.ToUpper().Split();
+            string[] all = Enum.GetNames(typeof(Aligment2));
+            Aligment2 result = Aligment2.NEUTRAL;
+            foreach (string este in all)
+            {
+                foreach (string teste in allcaps)
+                    if (teste == este)
+                    {
+                        Enum.TryParse(este, out result);
+                        return result;
+                    }
+            }
+
+
+            return result;
+        }
+
+        private static Servant_Class find_class(string txt)
+        {
+            string allcaps = txt.ToUpper();
+            string[] all = Servant_Class.GetNames(typeof(Servant_Class));
+            Servant_Class result = Servant_Class.ERROR;
+            foreach (string este in all)
+            {
+                if (allcaps.Contains(este))
+                {
+                    Enum.TryParse<Servant_Class>(este, out result);
+                    return result;
+                }
+            }
+            return result;
+
+        }
         public static void UpdateList()
         {
             _allow_insert = true;
@@ -44,6 +96,7 @@ namespace FateDB
             {
                 int id = int.Parse(row.SelectSingleNode("td[1]").InnerText.ToString());
                 string name = row.SelectSingleNode("td[3]").SelectSingleNode("a").GetAttributeValue("title", "rip");
+                Console.WriteLine(row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").ChildNodes.Count);
                 Servant_Class cl = find_class(row.SelectSingleNode("td[4]").SelectSingleNode("div").SelectSingleNode("div").SelectSingleNode("img").GetAttributeValue("alt", "unknown"));
                 int rarity = getnum(row.SelectSingleNode("td[5]").InnerText.ToString());
                 int min_atk = int.Parse((row.SelectSingleNode("td[6]").InnerText.ToString()));
@@ -52,7 +105,8 @@ namespace FateDB
                 int max_hp = int.Parse((row.SelectSingleNode("td[9]").InnerText.ToString()));
                 HtmlNode profile = null;
                 string[] tentativa2 = name.Split();
-
+                
+                //webClient.DownloadFile(row.SelectSingleNode("td[3]").SelectSingleNode("a").SelectSingleNode("img").ToString(),name);
                 foreach (HtmlNode roww in ServantProfiles)
                 {
                     if (roww.SelectSingleNode("td[1]").SelectSingleNode("a").GetAttributeValue("title", "rip") == name)
@@ -108,66 +162,14 @@ namespace FateDB
                 Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2);
                 _all_servants.Add(novo);
             }
-            
+
 
             int getnum(string txt)
             {
                 return int.Parse(txt[0].ToString());
             }
-            
-            Alignment find_alig(string txt)
-            {
-                string[] allcaps = txt.ToUpper().Split();
-                string[] all = Servant_Class.GetNames(typeof(Alignment));
-                Alignment result = Alignment.BALANCED;
-                foreach (string este in all)
-                {
-                    foreach (string teste in allcaps)
-                        if (teste == este)
-                        {
-                            Enum.TryParse(este, out result);
-                            return result;
-                        }
-                }
-                return result;
-
-            }
-
-            Aligment2 find_alig2(string txt)
-            {
-                string[] allcaps = txt.ToUpper().Split();
-                string[] all = Enum.GetNames(typeof(Aligment2));
-                Aligment2 result = Aligment2.NEUTRAL;
-                foreach (string este in all)
-                {
-                    foreach (string teste in allcaps)
-                        if (teste == este)
-                        {
-                            Enum.TryParse(este, out result);
-                            return result;
-                        }
-                }
 
 
-                return result;
-            }
-
-            Servant_Class find_class(string txt)
-            {
-                string allcaps = txt.ToUpper();
-                string[] all = Servant_Class.GetNames(typeof(Servant_Class));
-                Servant_Class result = Servant_Class.ERROR;
-                foreach (string este in all)
-                {
-                    if (allcaps.Contains(este))
-                    {
-                        Enum.TryParse<Servant_Class>(este, out result);
-                        return result;
-                    }
-                }
-                return result;
-
-            }
 
             _allow_insert = false;
             ServantContainer.Save();
@@ -177,10 +179,28 @@ namespace FateDB
         {
             XElement teste = ServantContainer.Load();
             _all_servants.Clear();
-            foreach(XElement ola in teste.Elements())
+            _allow_insert = true;
+            foreach (XElement ola in teste.Elements())
             {
+                int id = int.Parse(ola.Attribute("Id").Value);
+                string nome = ola.Attribute("Name").Value;
+                Servant_Class cl = find_class(ola.Attribute("Class").Value);
+                int rarity = int.Parse(ola.Attribute("Rarity").Value);
+                int minatk = int.Parse(ola.Attribute("Minimum_Attack").Value);
+                int maxatk = int.Parse(ola.Attribute("Maximum_Attack").Value);
+                int minhp = int.Parse(ola.Attribute("Minimum_Health").Value);
+                int maxhp = int.Parse(ola.Attribute("Maximum_Health").Value);
+                string origin = ola.Attribute("Origin").Value;
+                string region = ola.Attribute("Region").Value;
+                string height = ola.Attribute("Height").Value;
+                string weight = ola.Attribute("Weight").Value;
+                string gender = ola.Attribute("Gender").Value;
+                Alignment alig = find_alig(ola.Attribute("Aligment").Value);
+                Aligment2 alig2 = find_alig2(ola.Attribute("Aligment2").Value);
 
+                _all_servants.Add(new Servant(id, nome, cl, rarity, minatk, maxatk, minhp, maxhp, origin, region, height, weight, gender, alig, alig2));
             }
+            _allow_insert = false;
 
 
         }

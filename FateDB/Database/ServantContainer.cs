@@ -38,6 +38,7 @@ namespace FateDB.Database
                                                new XAttribute("Origin", x.Origin),
                                                new XAttribute("Region", x.Region),
                                                new XAttribute("Height", x.Height),
+                                               new XAttribute("Weight", x.Weight),
                                                new XAttribute("Gender", x.Gender),
                                                new XAttribute("Aligment", x.Aligment),
                                                new XAttribute("Aligment2", x.Aligment2))));
