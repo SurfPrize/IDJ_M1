@@ -28,7 +28,9 @@ namespace FateDB
         private Alignment _aligment;
         private Aligment2 _aligment2;
         private int _id;
-
+        private NPType _nptype;
+        private string _npName;
+        private NPRank _rank;
         public int Maxlvl;
 
 
@@ -60,12 +62,14 @@ namespace FateDB
                 _currenthp = _minhp + (_maxatk / Maxlvl * value);
             }
         }
-        
+
         public int Id => _id;
         public string Name => _name;
-        
+
         public Servant_Class Class => _class;
-        
+        public NPType NPType => _nptype;
+        public string NPName => _npName;
+        public NPRank NPRank => _rank;
         public int Rarity => _rarity;
         public int Atklvl => _currentatk;
         public int Hplvl => _currenthp;
