@@ -41,7 +41,10 @@ namespace FateDB.Database
                                                new XAttribute("Weight", x.Weight),
                                                new XAttribute("Gender", x.Gender),
                                                new XAttribute("Aligment", x.Aligment),
-                                               new XAttribute("Aligment2", x.Aligment2))));
+                                               new XAttribute("Aligment2", x.Aligment2),
+                                               new XAttribute("NPName", x.NPName),
+                                               new XAttribute("NPType", x.NPType),
+                                               new XAttribute("NPRank", x.NPRank))));
             xml.Save(path+dbname);
         }
     }

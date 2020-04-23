@@ -90,7 +90,31 @@ namespace FateDB
         public Alignment Aligment => _aligment;
         public Aligment2 Aligment2 => _aligment2;
 
-        public Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2)
+        public Servant(Servant novo)
+        {
+            _id = novo.Id;
+            _name = novo.Name;
+            _class = novo.Class;
+            _rarity = novo.Rarity;
+            _minatk = novo.Minatk;
+            _maxatk = novo.Maxatk;
+            _minhp = novo.Minhp;
+            _maxhp = novo.Maxhp;
+            _origin = novo.Origin;
+            _region = novo.Region;
+            _height = novo.Height;
+            _weight = novo.Weight;
+            _gender = novo.Gender;
+            _aligment = novo.Aligment;
+            _aligment2 = novo.Aligment2;
+            _npName = novo.NPName;
+            _nptype = novo.NPType;
+            _rank = novo.NPRank;
+            Maxlvl = 100;
+            Lvl = 1;
+        }
+
+        public Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2, string npname, NPType nptipo, NPRank rank)
         {
             if (ThroneOfHeroes.Allow_insert)
             {
@@ -109,24 +133,25 @@ namespace FateDB
                 _gender = gender;
                 _aligment = aligment;
                 _aligment2 = aligment2;
+                _npName = npname;
+                _nptype = nptipo;
+                _rank = rank;
                 Maxlvl = 100;
                 Lvl = 1;
             }
             else
             {
                 Console.WriteLine("DENIED");
-                ThroneOfHeroes.Summon(id);
+                ThroneOfHeroes.Summon_by_id(id);
             }
 
         }
-        public Servant()
-        {
 
-        }
+       
 
         public override string ToString()
         {
-            string res = Name + " CLASS:" + Class + " " + Rarity + " STAR SERVANT" + " ORIGIN:" + Origin + " LVL:" + Lvl + " ATK:" + _currentatk + " HP:" + _currenthp + " HEIGHT:" + Height + " WEIGHT:" + Weight + " GENDER:" + Gender + " ALIGMENT:" + Aligment2 + " " + Aligment;
+            string res = Name + " CLASS:" + Class + " " + Rarity + " STAR SERVANT" + " ORIGIN:" + Origin + " LVL:" + Lvl + " ATK:" + _currentatk + " HP:" + _currenthp + " HEIGHT:" + Height + " WEIGHT:" + Weight + " GENDER:" + Gender + " ALIGMENT:" + Aligment2 + " " + Aligment + " Noble Phantasm:" + NPName + " TYPE:" + NPType + " RANK:" + NPRank;
             return res.ToString();
         }
 

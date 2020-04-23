@@ -95,6 +95,25 @@ namespace FateDB
 
             return result;
         }
+
+        private static NPRank getnprank(string txt)
+        {
+            NPRank result = NPRank.B;
+            string allcaps = txt.ToUpper();
+
+            string[] all = NPRank.GetNames(typeof(NPRank));
+            foreach (string este in all)
+            {
+                if (allcaps.Replace("RANK", "").Contains(este))
+                {
+                    Enum.TryParse<NPRank>(este, out result);
+                    return result;
+                }
+            }
+
+            return result;
+        }
+
         public static void UpdateList()
         {
             _allow_insert = true;
@@ -136,19 +155,85 @@ namespace FateDB
                 int max_atk = int.Parse((row.SelectSingleNode("td[7]").InnerText.ToString()));
                 int min_hp = int.Parse((row.SelectSingleNode("td[8]").InnerText.ToString()));
                 int max_hp = int.Parse((row.SelectSingleNode("td[9]").InnerText.ToString()));
+                NPRank rank = NPRank.B;
 
-                NPType tipo = getnptype(servanthtml.DocumentNode.SelectNodes("//div[contains(@title, 'Rank') or contains(@title, 'NP')]")
-                    .Descendants("p")
-                    .Skip(1)
-                    .First()
-                    .InnerText);
-                string Npname = servanthtml.DocumentNode.SelectNodes("//div[contains(@title, 'Rank') or contains(@title, 'NP')]").Descendants("tr").First().Descendants("div").First().Descendants("b").First().InnerHtml.Split('<').First();
-                if (Npname == "")
+                NPType tipo = NPType.ANTI_PERSONEL;
+                bool found = false;
+                string Npname = "???????????";
+                if (name != "Solomon")
                 {
-                    Npname = servanthtml.DocumentNode.SelectNodes("//div[contains(@title, 'Rank') or contains(@title, 'NP')]").Descendants("tr").First().Descendants("div").First().Descendants("b").First().InnerHtml.Split('>').Skip(1).First();
+                    foreach (HtmlNode este in servanthtml.DocumentNode.SelectNodes("//div[contains(@title, 'Rank') or contains(@title, 'NP') or contains(@title, 'EX') or contains(@title, 'Lord Camelot')]").ToList())
+                    {
+                        if (!found)
+                        {
+                            if (este.GetAttributeValue("title", "nope").Split().First() == "Rank" ||
+                                este.GetAttributeValue("title", "nope").Split().First() == "NP" ||
+                                este.GetAttributeValue("title", "nope").Split().First() == "EX" ||
+                                este.GetAttributeValue("title", "nope") == "Lord Camelot")
+                            {
+                                Console.WriteLine(este
+                               .Descendants("tr")
+                               .First()
+                               .Descendants("div")
+                               .First()
+                               .InnerHtml);
+
+                                if (este
+                               .Descendants("tr")
+                               .First()
+                               .Descendants("div")
+                               .First()
+                               .Descendants("b").Count()
+                               != 0)
+                                {
+                                    Npname = este
+                                   .Descendants("tr")
+                                   .First()
+                                   .Descendants("div")
+                                   .First()
+                                   .Descendants("b")
+                                   .First()
+                                   .InnerHtml
+                                   .Split('<')
+                                   .First();
+                                }
+                                else
+                                {
+                                    Npname = este
+                                  .Descendants("tr")
+                                  .First()
+                                  .Descendants("div")
+                                  .First()
+                                  .InnerHtml;
+                                }
+
+                                if (Npname == "")
+                                {
+                                    Npname = este.Descendants("tr").First().Descendants("div").First().Descendants("b").First().InnerHtml.Split('>').Skip(1).First();
+                                    if (Npname == "<br")
+                                    {
+                                        Npname = "????";
+                                    }
+                                }
+
+                                tipo = getnptype(este
+                                .Descendants("p")
+                                .Skip(1)
+                                .First()
+                                .InnerText);
+
+                                rank = getnprank(este
+                                .GetAttributeValue("title", "unknown"));
+                                found = true;
+                            }
+                        }
+                    }
                 }
+
+
+
                 // string skill1 = servanthtml.DocumentNode.SelectSingleNode("//div[@title='1st Skill']").Descendants("div").Count();
-                Console.WriteLine(name + " " + Npname);
+                Console.WriteLine(name + " " + Npname + " " + rank + " " + tipo);
 
                 HtmlNode profile = null;
                 string[] tentativa2 = name.Split();
@@ -208,8 +293,11 @@ namespace FateDB
                     align = Alignment.BEAST;
                     align2 = Aligment2.NEUTRAL;
                 }
-                Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2);
-                _all_servants.Add(novo);
+                if (name != "Solomon")
+                {
+                    Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2, Npname, tipo, rank);
+                    _all_servants.Add(novo);
+                }
             }
 
 
@@ -246,20 +334,21 @@ namespace FateDB
                 string gender = ola.Attribute("Gender").Value;
                 Alignment alig = find_alig(ola.Attribute("Aligment").Value);
                 Aligment2 alig2 = find_alig2(ola.Attribute("Aligment2").Value);
+                string npname = ola.Attribute("NPName").Value; ;
+                NPType tipo = getnptype(ola.Attribute("NPType").Value);
+                NPRank rank = getnprank(ola.Attribute("NPRank").Value);
 
-                _all_servants.Add(new Servant(id, nome, cl, rarity, minatk, maxatk, minhp, maxhp, origin, region, height, weight, gender, alig, alig2));
+
+                _all_servants.Add(new Servant(id, nome, cl, rarity, minatk, maxatk, minhp, maxhp, origin, region, height, weight, gender, alig, alig2, npname, tipo, rank));
             }
             _allow_insert = false;
 
 
         }
 
-        public static Servant Summon(int id)
+        public static Servant Summon_by_id(int id)
         {
-            if (All_servants.Count == 0)
-            {
-                UpdateList();
-            }
+
             if (id > All_servants.Count())
             {
                 id -= All_servants.Count();
@@ -271,6 +360,47 @@ namespace FateDB
             return All_servants.Find(x => x.Id == id);
         }
 
+        public static List<Servant> Summon_by_Class(Servant_Class cl)
+        {
+
+            List<Servant> res = All_servants.FindAll((x => x.Class == cl));
+            return res;
+        }
+
+        public static Servant Summon_by_Class(Servant_Class cl,int a)
+        {
+
+            List<Servant> res = All_servants.FindAll(x => x.Class == cl);
+            while (res.Count < a)
+            {
+                a -= res.Count;
+            }
+            return res[a];
+        }
+
+        public static List<Servant> Summon_by_Class(List<Servant_Class> cl)
+        {
+            List<Servant> res = new List<Servant>();
+            foreach (Servant_Class este in cl)
+            {
+                res.AddRange(All_servants.FindAll(x => x.Class == este));
+            }
+            return res;
+        }
+
+        public static Servant Summon_by_Class(List<Servant_Class> cl, int a)
+        {
+            List<Servant> res = new List<Servant>();
+            foreach (Servant_Class este in cl)
+            {
+                res.AddRange(All_servants.FindAll(x => x.Class == este));
+            }
+            while (res.Count < a)
+            {
+                a -= res.Count;
+            }
+            return res[a];
+        }
 
     }
 }
