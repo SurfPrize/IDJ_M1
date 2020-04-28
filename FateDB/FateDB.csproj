@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttackSystem.cs" />
     <Compile Include="Database\ServantContainer.cs" />
     <Compile Include="Database\ThroneOfHeroes.cs" />
     <Compile Include="Enums.cs" />

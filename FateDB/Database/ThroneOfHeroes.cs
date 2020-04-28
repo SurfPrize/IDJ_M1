@@ -5,10 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 
 namespace FateDB
 {
@@ -239,7 +236,12 @@ namespace FateDB
                 string[] tentativa2 = name.Split();
                 if (!File.Exists(ServantContainer.path + "/" + id + ".png"))
                 {
-                    webClient.DownloadFile("https://grandorder.wiki" + row.SelectSingleNode("td[2]").SelectSingleNode("div").SelectSingleNode("div").Descendants("img").Single().GetAttributeValue("src", "unknown"), ServantContainer.path + "/" + id + ".png");
+                    webClient.DownloadFile("https://grandorder.wiki" + row.SelectSingleNode("td[2]")
+                        .SelectSingleNode("div")
+                        .SelectSingleNode("div")
+                        .Descendants("img")
+                        .Single()
+                        .GetAttributeValue("src", "unknown"), ServantContainer.path + "/" + id + ".png");
                 }
                 foreach (HtmlNode roww in ServantProfiles)
                 {
@@ -258,7 +260,9 @@ namespace FateDB
                 {
                     foreach (HtmlNode roww in ServantProfiles)
                     {
-                        string[] tent = roww.SelectSingleNode("td[1]").SelectSingleNode("a").GetAttributeValue("title", "rip").Split();
+                        string[] tent = roww.SelectSingleNode("td[1]")
+                            .SelectSingleNode("a")
+                            .GetAttributeValue("title", "rip").Split();
                         foreach (string este in tent)
                         {
                             if (este == tentativa2[0])

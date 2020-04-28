@@ -16,10 +16,15 @@ namespace FateDB
         private Servant_Class _class;
         private int _rarity;
 
-        private int _currentatk;
-        private int _currenthp;
+        private int _maxcurrentatk;
+        private int _maxcurrenthp;
         private int _lvl = 1;
-
+        private int _minatk;
+        private int _maxatk;
+        private int _minhp;
+        private int _maxhp;
+        private bool _alive = true;
+        public bool isAlive => _alive;
         private string _origin;
         private string _region;
         private string _height;
@@ -34,19 +39,40 @@ namespace FateDB
         public int Maxlvl;
 
 
-        public int atk
+        public int Atk
         {
-            get => atk;
+            get => Atk;
             set
             {
                 if (value < 0)
                 {
-                    atk = 0;
+                    Atk = 0;
                 }
             }
         }
 
-        public int Hp { get; set; }
+        public int Hp
+        {
+            get => Hp;
+            set
+            {
+                if (value < 0)
+                {
+                    //morrer
+                }
+
+                if (value > _maxcurrenthp)
+                {
+                    Hp = _maxcurrenthp;
+                }
+                else
+                {
+                    Hp = value;
+                }
+            }
+        }
+
+
         public int Lvl
         {
             get => _lvl;
@@ -58,8 +84,8 @@ namespace FateDB
                 {
                     _lvl = 1;
                 }
-                _currentatk = _minatk + (_maxatk / Maxlvl * value);
-                _currenthp = _minhp + (_maxatk / Maxlvl * value);
+                _maxcurrentatk = _minatk + (_maxatk / Maxlvl * value);
+                _maxcurrenthp = _minhp + (_maxatk / Maxlvl * value);
             }
         }
 
@@ -71,12 +97,8 @@ namespace FateDB
         public string NPName => _npName;
         public NPRank NPRank => _rank;
         public int Rarity => _rarity;
-        public int Atklvl => _currentatk;
-        public int Hplvl => _currenthp;
-        private int _minatk;
-        private int _maxatk;
-        private int _minhp;
-        private int _maxhp;
+        public int Atklvl => _maxcurrentatk;
+        public int Hplvl => _maxcurrenthp;
 
         public int Minatk => _minatk;
         public int Maxatk => _maxatk;
@@ -89,6 +111,43 @@ namespace FateDB
         public string Gender => _gender;
         public Alignment Aligment => _aligment;
         public Aligment2 Aligment2 => _aligment2;
+        public List<AttackType> cards = new List<AttackType>() { AttackType.ATTACK, AttackType.COUNTER, AttackType.SPELL };
+
+        public AttackType[] atk_definido = new AttackType[3];
+
+        public void Pick_cards()
+        {
+            AttackType[] res = Drawcards();
+            foreach (AttackType este in res)
+            {
+                Console.Write(este + " ");
+            }
+
+            Set_cards(res[int.Parse(Console.ReadLine()) - 1], res[int.Parse(Console.ReadLine()) - 1], res[int.Parse(Console.ReadLine()) - 1]);
+        }
+
+        public AttackType[] Drawcards()
+        {
+            Random r = new Random();
+            AttackType[] resultado = new AttackType[3];
+            for (int i = 0; i < 5; i++)
+            {
+                resultado[i] = cards[r.Next(0, cards.Count - 1)];
+            }
+            return resultado;
+        }
+
+        public void Set_cards(AttackType first, AttackType second, AttackType third)
+        {
+            cards.Add(first); cards.Add(second); cards.Add(third);
+            atk_definido = new AttackType[3] { first, second, third };
+        }
+
+        public void Set_cards(int first, int second, int third)
+        {
+            cards.Add((AttackType)third); cards.Add((AttackType)third); cards.Add((AttackType)third);
+            atk_definido = new AttackType[3] { (AttackType)first, (AttackType)second, (AttackType)third };
+        }
 
         public Servant(Servant novo)
         {
@@ -147,11 +206,10 @@ namespace FateDB
 
         }
 
-       
 
         public override string ToString()
         {
-            string res = Name + " CLASS:" + Class + " " + Rarity + " STAR SERVANT" + " ORIGIN:" + Origin + " LVL:" + Lvl + " ATK:" + _currentatk + " HP:" + _currenthp + " HEIGHT:" + Height + " WEIGHT:" + Weight + " GENDER:" + Gender + " ALIGMENT:" + Aligment2 + " " + Aligment + " Noble Phantasm:" + NPName + " TYPE:" + NPType + " RANK:" + NPRank;
+            string res = Name + " CLASS:" + Class + " " + Rarity + " STAR SERVANT" + " ORIGIN:" + Origin + " LVL:" + Lvl + " ATK:" + _maxcurrentatk + " HP:" + _maxcurrenthp + " HEIGHT:" + Height + " WEIGHT:" + Weight + " GENDER:" + Gender + " ALIGMENT:" + Aligment2 + " " + Aligment + " Noble Phantasm:" + NPName + " TYPE:" + NPType + " RANK:" + NPRank;
             return res.ToString();
         }
 

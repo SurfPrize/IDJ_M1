@@ -78,4 +78,26 @@ namespace FateDB
         D,
         E
     }
+
+    public enum Trait
+    {
+        MADNESS_ENHANCMENT,
+        INDEPENDENT_ACTION,
+        TERRITORY_CREATION,
+        RIDING,
+        DIVINITY,
+        TRANSCENDENTAL_EXISTENCE,
+        CORE_OF_THE_GODDESS,
+        ITEM_CONSTRUCTION,
+        MAGIC_RESISTANCE,
+        PRESENCE_CONCELAMENT,
+        SELFRESTORATION
+    }
+
+    public enum AttackType
+    {
+        ATTACK,
+        COUNTER,
+        SPELL
+    }
 }
