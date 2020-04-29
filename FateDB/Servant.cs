@@ -35,9 +35,10 @@ namespace FateDB
         private int _id;
         private NPType _nptype;
         private string _npName;
-        private NPRank _rank;
+        private SkillRank _rank;
         public int Maxlvl;
-
+        private List<Trait> _alltraits;
+        public List<Trait> Alltraits=>_alltraits;
 
         public int Atk
         {
@@ -95,7 +96,7 @@ namespace FateDB
         public Servant_Class Class => _class;
         public NPType NPType => _nptype;
         public string NPName => _npName;
-        public NPRank NPRank => _rank;
+        public SkillRank NPRank => _rank;
         public int Rarity => _rarity;
         public int Atklvl => _maxcurrentatk;
         public int Hplvl => _maxcurrenthp;
@@ -173,7 +174,7 @@ namespace FateDB
             Lvl = 1;
         }
 
-        public Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2, string npname, NPType nptipo, NPRank rank)
+        public Servant(int id, string name, Servant_Class classe, int rarity, int min_atk, int max_atk, int min_hp, int max_hp, string origin, string region, string height, string weight, string gender, Alignment aligment, Aligment2 aligment2, string npname, NPType nptipo, SkillRank rank,List<Trait> atraits)
         {
             if (ThroneOfHeroes.Allow_insert)
             {
@@ -195,6 +196,7 @@ namespace FateDB
                 _npName = npname;
                 _nptype = nptipo;
                 _rank = rank;
+                _alltraits = atraits;
                 Maxlvl = 100;
                 Lvl = 1;
             }
@@ -214,5 +216,17 @@ namespace FateDB
         }
 
 
+    }
+
+    public class Trait
+    {
+
+        public TraitDesc trait;
+        public SkillRank rank;
+        public Trait(TraitDesc desc, SkillRank r)
+        {
+            trait = desc;
+            rank = r;
+        }
     }
 }

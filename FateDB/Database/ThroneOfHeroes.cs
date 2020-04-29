@@ -24,7 +24,7 @@ namespace FateDB
         private static Alignment find_alig(string txt)
         {
             string[] allcaps = txt.ToUpper().Split();
-            string[] all = Servant_Class.GetNames(typeof(Alignment));
+            string[] all = Enum.GetNames(typeof(Alignment));
             Alignment result = Alignment.BALANCED;
             foreach (string este in all)
             {
@@ -80,7 +80,7 @@ namespace FateDB
             NPType result = NPType.ANTI_PERSONEL;
             string allcaps = txt.ToUpper();
 
-            string[] all = NPType.GetNames(typeof(NPType));
+            string[] all = Enum.GetNames(typeof(NPType));
             foreach (string este in all)
             {
                 if (allcaps.Contains(este.Replace("_", "-")))
@@ -93,17 +93,17 @@ namespace FateDB
             return result;
         }
 
-        private static NPRank getnprank(string txt)
+        private static SkillRank getnprank(string txt)
         {
-            NPRank result = NPRank.B;
+            SkillRank result = SkillRank.B;
             string allcaps = txt.ToUpper();
 
-            string[] all = NPRank.GetNames(typeof(NPRank));
+            string[] all = SkillRank.GetNames(typeof(SkillRank));
             foreach (string este in all)
             {
                 if (allcaps.Replace("RANK", "").Contains(este))
                 {
-                    Enum.TryParse<NPRank>(este, out result);
+                    Enum.TryParse<SkillRank>(este, out result);
                     return result;
                 }
             }
@@ -111,10 +111,49 @@ namespace FateDB
             return result;
         }
 
+        private static Trait GetTrait(string txt, string trait)
+        {
+            Enum.TryParse<TraitDesc>(trait, out TraitDesc desc);
+            Enum.TryParse<SkillRank>(txt.Replace(trait, ""), out SkillRank skillres);
+            Trait res = new Trait(desc, skillres);
+
+            return res;
+        }
+        private static Trait GetTrait(string txt)
+        {
+            SkillRank skillres = SkillRank.B;
+            TraitDesc traitres = TraitDesc.MADNESS_ENHANCMENT;
+
+            string[] all = Enum.GetNames(typeof(TraitDesc));
+            foreach (string este in all)
+            {
+                if (txt.ToUpper().Contains(este))
+                {
+                    Enum.TryParse<TraitDesc>(este, out traitres);
+                }
+            }
+
+            all = Enum.GetNames(typeof(SkillRank));
+            foreach (string este in all)
+            {
+                if (txt.ToUpper().Replace(traitres.ToString(), "").Contains(este))
+                {
+                    Enum.TryParse<SkillRank>(este, out skillres);
+                }
+            }
+
+
+
+
+            Trait res = new Trait(traitres, skillres);
+            return res;
+        }
+
         public static void UpdateList()
         {
             _allow_insert = true;
             WebClient webClient = new WebClient();
+            webClient.Headers["User-Agent"] = "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)";
             string page = webClient.DownloadString("https://grandorder.wiki/Servant_List");
             string page2 = webClient.DownloadString("https://grandorder.wiki/Servants_by_Profile");
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -128,6 +167,9 @@ namespace FateDB
 
             foreach (var row in ServantStats)
             {
+                Console.WriteLine("https://grandorder.wiki" + row.SelectSingleNode("td[3]")
+                    .SelectSingleNode("a")
+                    .GetAttributeValue("href", "rip"));
                 HtmlDocument servanthtml = new HtmlDocument();
                 string serv_page = webClient.DownloadString("https://grandorder.wiki" + row.SelectSingleNode("td[3]")
                     .SelectSingleNode("a")
@@ -152,96 +194,120 @@ namespace FateDB
                 int max_atk = int.Parse((row.SelectSingleNode("td[7]").InnerText.ToString()));
                 int min_hp = int.Parse((row.SelectSingleNode("td[8]").InnerText.ToString()));
                 int max_hp = int.Parse((row.SelectSingleNode("td[9]").InnerText.ToString()));
-                NPRank rank = NPRank.B;
+                SkillRank rank = SkillRank.B;
 
+                List<Trait> alltraits = new List<Trait>();
                 NPType tipo = NPType.ANTI_PERSONEL;
-                bool found = false;
                 string Npname = "???????????";
+                bool found = false;
                 if (name != "Solomon")
                 {
-                    foreach (HtmlNode este in servanthtml.DocumentNode.SelectNodes("//div[contains(@title, 'Rank') or contains(@title, 'NP') or contains(@title, 'EX') or contains(@title, 'Lord Camelot')]").ToList())
+                    // foreach (HtmlNode este in servanthtml.DocumentNode.SelectNodes("//div[contains(@title, 'Rank') or contains(@title, 'NP') or contains(@title, 'EX') or contains(@title, 'Lord Camelot')]").ToList())
+                    foreach (HtmlNode este in servanthtml.DocumentNode.SelectNodes("//div").ToList())
                     {
                         if (!found)
                         {
-                            if (este.GetAttributeValue("title", "nope").Split().First() == "Rank" ||
-                                este.GetAttributeValue("title", "nope").Split().First() == "NP" ||
-                                este.GetAttributeValue("title", "nope").Split().First() == "EX" ||
-                                este.GetAttributeValue("title", "nope") == "Lord Camelot")
+                            if (este.GetAttributeValue("title", "nope").Contains("NP") ||
+                                este.GetAttributeValue("title", "nope").Contains("EX") ||
+                                este.GetAttributeValue("title", "nope").Contains("Lord Camelot"))
                             {
-                                Console.WriteLine(este
-                               .Descendants("tr")
-                               .First()
-                               .Descendants("div")
-                               .First()
-                               .InnerHtml);
-
-                                if (este
-                               .Descendants("tr")
-                               .First()
-                               .Descendants("div")
-                               .First()
-                               .Descendants("b").Count()
-                               != 0)
+                                if (este.GetAttributeValue("title", "nope").Split().First() == "Rank" ||
+                                    este.GetAttributeValue("title", "nope").Split().First() == "NP" ||
+                                    este.GetAttributeValue("title", "nope").Split().First() == "EX" ||
+                                    este.GetAttributeValue("title", "nope") == "Lord Camelot")
                                 {
-                                    Npname = este
+                                    
+
+                                    if (este
                                    .Descendants("tr")
                                    .First()
                                    .Descendants("div")
                                    .First()
-                                   .Descendants("b")
-                                   .First()
-                                   .InnerHtml
-                                   .Split('<')
-                                   .First();
-                                }
-                                else
-                                {
-                                    Npname = este
-                                  .Descendants("tr")
-                                  .First()
-                                  .Descendants("div")
-                                  .First()
-                                  .InnerHtml;
-                                }
-
-                                if (Npname == "")
-                                {
-                                    Npname = este.Descendants("tr").First().Descendants("div").First().Descendants("b").First().InnerHtml.Split('>').Skip(1).First();
-                                    if (Npname == "<br")
+                                   .Descendants("b").Count()
+                                   != 0)
                                     {
-                                        Npname = "????";
+                                        Npname = este
+                                       .Descendants("tr")
+                                       .First()
+                                       .Descendants("div")
+                                       .First()
+                                       .Descendants("b")
+                                       .First()
+                                       .InnerHtml
+                                       .Split('<')
+                                       .First();
+                                    }
+                                    else
+                                    {
+                                        Npname = este
+                                      .Descendants("tr")
+                                      .First()
+                                      .Descendants("div")
+                                      .First()
+                                      .InnerHtml;
+                                    }
+
+                                    if (Npname == "")
+                                    {
+                                        Npname = este.Descendants("tr").First().Descendants("div").First().Descendants("b").First().InnerHtml.Split('>').Skip(1).First();
+                                        if (Npname == "<br")
+                                        {
+                                            Npname = "????";
+                                        }
+                                    }
+
+                                    tipo = getnptype(este
+                                    .Descendants("p")
+                                    .Skip(1)
+                                    .First()
+                                    .InnerText);
+
+                                    rank = getnprank(este
+                                    .GetAttributeValue("title", "unknown"));
+                                    found = true;
+                                }
+                            }
+                            else
+                            {
+                                if (este.GetAttributeValue("title", "nope") != "nope")
+                                {
+                                    foreach (string tr in Enum.GetNames(typeof(TraitDesc)).ToList())
+                                    {
+
+                                        if (este.GetAttributeValue("title", "nope").ToUpper().Contains(tr.Replace("_", " ")))
+                                        {
+                                            Console.WriteLine(name + " " + tr);
+                                            alltraits.Add(GetTrait(este.GetAttributeValue("title", "nope"), tr));
+                                        }
                                     }
                                 }
-
-                                tipo = getnptype(este
-                                .Descendants("p")
-                                .Skip(1)
-                                .First()
-                                .InnerText);
-
-                                rank = getnprank(este
-                                .GetAttributeValue("title", "unknown"));
-                                found = true;
                             }
                         }
+
                     }
                 }
 
 
 
                 // string skill1 = servanthtml.DocumentNode.SelectSingleNode("//div[@title='1st Skill']").Descendants("div").Count();
-                Console.WriteLine(name + " " + Npname + " " + rank + " " + tipo);
 
                 HtmlNode profile = null;
                 string[] tentativa2 = name.Split();
                 if (!File.Exists(ServantContainer.path + "/" + id + ".png"))
                 {
-                    webClient.DownloadFile("https://grandorder.wiki" + row.SelectSingleNode("td[2]")
-                        .SelectSingleNode("div")
-                        .SelectSingleNode("div")
-                        .Descendants("img")
-                        .Single()
-                        .GetAttributeValue("src", "unknown"), ServantContainer.path + "/" + id + ".png");
+                    try
+                    {
+                        webClient.DownloadFile("https://grandorder.wiki" + row.SelectSingleNode("td[2]")
+                            .SelectSingleNode("div")
+                            .SelectSingleNode("div")
+                            .Descendants("img")
+                            .Single()
+                            .GetAttributeValue("src", "unknown"), ServantContainer.path + "/" + id + ".png");
+                    }
+                    catch
+                    {
+                        Console.WriteLine("No image found");
+                    }
                 }
                 foreach (HtmlNode roww in ServantProfiles)
                 {
@@ -299,7 +365,7 @@ namespace FateDB
                 }
                 if (name != "Solomon")
                 {
-                    Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2, Npname, tipo, rank);
+                    Servant novo = new Servant(id, name, cl, rarity, min_atk, max_atk, min_hp, max_hp, origin, region, height, weight, gender, align, align2, Npname, tipo, rank, alltraits);
                     _all_servants.Add(novo);
                 }
             }
@@ -340,10 +406,18 @@ namespace FateDB
                 Aligment2 alig2 = find_alig2(ola.Attribute("Aligment2").Value);
                 string npname = ola.Attribute("NPName").Value; ;
                 NPType tipo = getnptype(ola.Attribute("NPType").Value);
-                NPRank rank = getnprank(ola.Attribute("NPRank").Value);
+                SkillRank rank = getnprank(ola.Attribute("NPRank").Value);
+                List<Trait> traits = new List<Trait>();
+                for (int i = 1; i <= Enum.GetValues(typeof(TraitDesc)).Length; i++)
+                {
+                    if (ola.Attribute("Trait" + i) != null)
+                    {
+                        traits.Add(GetTrait(ola.Attribute("Trait " + i).Value));
+                    }
+                }
 
 
-                _all_servants.Add(new Servant(id, nome, cl, rarity, minatk, maxatk, minhp, maxhp, origin, region, height, weight, gender, alig, alig2, npname, tipo, rank));
+                _all_servants.Add(new Servant(id, nome, cl, rarity, minatk, maxatk, minhp, maxhp, origin, region, height, weight, gender, alig, alig2, npname, tipo, rank, traits));
             }
             _allow_insert = false;
 
@@ -371,7 +445,7 @@ namespace FateDB
             return res;
         }
 
-        public static Servant Summon_by_Class(Servant_Class cl,int a)
+        public static Servant Summon_by_Class(Servant_Class cl, int a)
         {
 
             List<Servant> res = All_servants.FindAll(x => x.Class == cl);

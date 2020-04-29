@@ -69,7 +69,7 @@ namespace FateDB
         POETRY,
         SPIRIT
     }
-    public enum NPRank
+    public enum SkillRank
     {
         EX,
         A,
@@ -79,7 +79,7 @@ namespace FateDB
         E
     }
 
-    public enum Trait
+    public enum TraitDesc
     {
         MADNESS_ENHANCMENT,
         INDEPENDENT_ACTION,

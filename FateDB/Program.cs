@@ -10,15 +10,17 @@ namespace FateDB
     {
         private static void Main(string[] args)
         {
-            ThroneOfHeroes.Loadfromfile();
 
-            Master teste = new Master(ThroneOfHeroes.Summon_by_Class(Servant_Class.AVENGER, 5));
-            Console.WriteLine(teste.ToString());
-            Servant teste2 = ThroneOfHeroes.Summon_by_Class(Servant_Class.ARCHER, 4);
-            while (teste.isAlive || teste2.isAlive)
-            {
-                AttackSystem.Battle(teste, teste2);
-            }
+            ThroneOfHeroes.UpdateList();
+            //ThroneOfHeroes.Loadfromfile();
+
+            //Master teste = new Master(ThroneOfHeroes.Summon_by_Class(Servant_Class.AVENGER, 5));
+            //Console.WriteLine(teste.ToString());
+            //Servant teste2 = ThroneOfHeroes.Summon_by_Class(Servant_Class.ARCHER, 4);
+            //while (teste.isAlive || teste2.isAlive)
+            //{
+            //    AttackSystem.Battle(teste, teste2);
+            //}
             Console.Write("Enter to Exit");
             Console.ReadLine();
         }
