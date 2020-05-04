@@ -6,9 +6,17 @@ using System.Threading.Tasks;
 
 namespace FateDB
 {
+    /// <summary>
+    /// Personagem que controla servants, sendo um servant ele mesmo
+    /// </summary>
     public class Master : Servant
     {
+
+        
         private string _name = "NO NAME";
+        /// <summary>
+        /// Nome da Personagem
+        /// </summary>
         public string Master_Name
         {
             get => _name; set
@@ -23,7 +31,8 @@ namespace FateDB
                 }
             }
         }
-        private Servant parse_servant(Servant serv)
+
+        private Servant Parse_servant(Servant serv)
         {
             switch (serv.Class)
             {
@@ -48,14 +57,14 @@ namespace FateDB
 
         public Master(string name, string region, Servant serv) : base(serv)
         {
-            serv = parse_servant(serv);
+            serv = Parse_servant(serv);
             Master_Name = name;
             Master_region = region;
         }
 
-        public Master(Servant serv):base(serv)
+        public Master(Servant serv) : base(serv)
         {
-            serv = parse_servant(serv);
+            serv = Parse_servant(serv);
         }
 
         public override string ToString()

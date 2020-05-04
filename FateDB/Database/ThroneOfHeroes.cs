@@ -16,12 +16,20 @@ namespace FateDB
 
         private static List<Servant> _summoned_servants = new List<Servant>();
         private static List<Servant> _all_servants = new List<Servant>();
+        /// <summary>
+        /// Todos os default servants existentes
+        /// </summary>
         public static List<Servant> All_servants => _all_servants;
         public static List<Servant> Summoned_servants => _summoned_servants;
-        private static bool _allow_insert = false;
-        public static bool Allow_insert => _allow_insert;
 
-        private static Alignment find_alig(string txt)
+
+
+        /// <summary>
+        /// Funcao que devolve um aligment do tipo Aligment
+        /// </summary>
+        /// <param name="Linha de texto em string"></param>
+        /// <returns></returns>
+        private static Alignment Find_alig(string txt)
         {
             string[] allcaps = txt.ToUpper().Split();
             string[] all = Enum.GetNames(typeof(Alignment));
@@ -39,7 +47,12 @@ namespace FateDB
 
         }
 
-        private static Aligment2 find_alig2(string txt)
+        /// <summary>
+        /// Funcao que devolde a segunda parte do aligment do servant
+        /// </summary>
+        /// <param name="Linha de texto em string"></param>
+        /// <returns></returns>
+        private static Aligment2 Find_alig2(string txt)
         {
             string[] allcaps = txt.ToUpper().Split();
             string[] all = Enum.GetNames(typeof(Aligment2));
@@ -58,7 +71,13 @@ namespace FateDB
             return result;
         }
 
-        private static Servant_Class find_class(string txt)
+        /// <summary>
+        /// Funcao que devolve a classe da personagem em Servant_Class
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <seealso cref="Servant_Class"/>
+        /// <returns></returns>
+        private static Servant_Class Find_class(string txt)
         {
             string allcaps = txt.ToUpper();
             string[] all = Servant_Class.GetNames(typeof(Servant_Class));
@@ -75,7 +94,13 @@ namespace FateDB
 
         }
 
-        private static NPType getnptype(string txt)
+        /// <summary>
+        /// Funcao que devolve o tipo de Noble Phantasm da personagem em NPType
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <seealso cref="NPType"/>
+        /// <returns></returns>
+        private static NPType Getnptype(string txt)
         {
             NPType result = NPType.ANTI_PERSONEL;
             string allcaps = txt.ToUpper();
@@ -93,7 +118,13 @@ namespace FateDB
             return result;
         }
 
-        private static SkillRank getnprank(string txt)
+        /// <summary>
+        /// Funcao que devolve o Rank da habilidade da personagem em SkillRank
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <seealso cref="SkillRank"/>
+        /// <returns></returns>
+        private static SkillRank Getnprank(string txt)
         {
             SkillRank result = SkillRank.B;
             string allcaps = txt.ToUpper();
@@ -111,6 +142,12 @@ namespace FateDB
             return result;
         }
 
+        /// <summary>
+        /// Devolve uma classe trait para uma personagem
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <param name="trait"></param>
+        /// <returns></returns>
         private static Trait GetTrait(string txt, string trait)
         {
             Enum.TryParse<TraitDesc>(trait, out TraitDesc desc);
@@ -119,6 +156,12 @@ namespace FateDB
 
             return res;
         }
+
+        /// <summary>
+        /// Devolve uma classe trait para uma personagem
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
         private static Trait GetTrait(string txt)
         {
             SkillRank skillres = SkillRank.B;
@@ -149,14 +192,17 @@ namespace FateDB
             return res;
         }
 
+        /// <summary>
+        /// <para>Funcao que atualiza os servants default</para>
+        /// <para>Esta funcao demora visto que vai a internet buscar dados das personagens e pode dar HTTP error 500 em dias que estejam a atualizar a pagina</para>
+        /// </summary>
         public static void UpdateList()
         {
-            _allow_insert = true;
             WebClient webClient = new WebClient();
             webClient.Headers["User-Agent"] = "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)";
             string page = webClient.DownloadString("https://grandorder.wiki/Servant_List");
             string page2 = webClient.DownloadString("https://grandorder.wiki/Servants_by_Profile");
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(page);
             HtmlDocument doc2 = new HtmlDocument();
             doc2.LoadHtml(page2);
@@ -167,9 +213,7 @@ namespace FateDB
 
             foreach (var row in ServantStats)
             {
-                Console.WriteLine("https://grandorder.wiki" + row.SelectSingleNode("td[3]")
-                    .SelectSingleNode("a")
-                    .GetAttributeValue("href", "rip"));
+
                 HtmlDocument servanthtml = new HtmlDocument();
                 string serv_page = webClient.DownloadString("https://grandorder.wiki" + row.SelectSingleNode("td[3]")
                     .SelectSingleNode("a")
@@ -183,7 +227,7 @@ namespace FateDB
                     .SelectSingleNode("a")
                     .GetAttributeValue("title", "rip");
 
-                Servant_Class cl = find_class(row.SelectSingleNode("td[4]")
+                Servant_Class cl = Find_class(row.SelectSingleNode("td[4]")
                     .SelectSingleNode("div")
                     .SelectSingleNode("div")
                     .SelectSingleNode("img")
@@ -207,65 +251,62 @@ namespace FateDB
                     {
                         if (!found)
                         {
-                            if (este.GetAttributeValue("title", "nope").Contains("NP") ||
-                                este.GetAttributeValue("title", "nope").Contains("EX") ||
-                                este.GetAttributeValue("title", "nope").Contains("Lord Camelot"))
-                            {
-                                if (este.GetAttributeValue("title", "nope").Split().First() == "Rank" ||
-                                    este.GetAttributeValue("title", "nope").Split().First() == "NP" ||
-                                    este.GetAttributeValue("title", "nope").Split().First() == "EX" ||
-                                    este.GetAttributeValue("title", "nope") == "Lord Camelot")
-                                {
-                                    
 
-                                    if (este
+                            if (este.GetAttributeValue("title", "nope").Split().First() == "Rank" ||
+                                este.GetAttributeValue("title", "nope").Split().First() == "NP" ||
+                                este.GetAttributeValue("title", "nope").Split().First() == "EX" ||
+                                este.GetAttributeValue("title", "nope") == "Lord Camelot")
+                            {
+                                Console.WriteLine("ok");
+
+                                if (este
+                               .Descendants("tr")
+                               .First()
+                               .Descendants("div")
+                               .First()
+                               .Descendants("b").Count()
+                               != 0)
+                                {
+                                    Npname = este
                                    .Descendants("tr")
                                    .First()
                                    .Descendants("div")
                                    .First()
-                                   .Descendants("b").Count()
-                                   != 0)
-                                    {
-                                        Npname = este
-                                       .Descendants("tr")
-                                       .First()
-                                       .Descendants("div")
-                                       .First()
-                                       .Descendants("b")
-                                       .First()
-                                       .InnerHtml
-                                       .Split('<')
-                                       .First();
-                                    }
-                                    else
-                                    {
-                                        Npname = este
-                                      .Descendants("tr")
-                                      .First()
-                                      .Descendants("div")
-                                      .First()
-                                      .InnerHtml;
-                                    }
-
-                                    if (Npname == "")
-                                    {
-                                        Npname = este.Descendants("tr").First().Descendants("div").First().Descendants("b").First().InnerHtml.Split('>').Skip(1).First();
-                                        if (Npname == "<br")
-                                        {
-                                            Npname = "????";
-                                        }
-                                    }
-
-                                    tipo = getnptype(este
-                                    .Descendants("p")
-                                    .Skip(1)
-                                    .First()
-                                    .InnerText);
-
-                                    rank = getnprank(este
-                                    .GetAttributeValue("title", "unknown"));
-                                    found = true;
+                                   .Descendants("b")
+                                   .First()
+                                   .InnerHtml
+                                   .Split('<')
+                                   .First();
                                 }
+                                else
+                                {
+                                    Npname = este
+                                  .Descendants("tr")
+                                  .First()
+                                  .Descendants("div")
+                                  .First()
+                                  .InnerHtml;
+                                }
+
+                                if (Npname == "")
+                                {
+                                    Npname = este.Descendants("tr").First().Descendants("div").First().Descendants("b").First().InnerHtml.Split('>').Skip(1).First();
+                                    if (Npname == "<br")
+                                    {
+                                        Npname = "????";
+                                    }
+                                }
+
+                                tipo = Getnptype(este
+                                .Descendants("p")
+                                .Skip(1)
+                                .First()
+                                .InnerText);
+
+                                rank = Getnprank(este
+                                .GetAttributeValue("title", "unknown"));
+                                found = true;
+
                             }
                             else
                             {
@@ -276,20 +317,20 @@ namespace FateDB
 
                                         if (este.GetAttributeValue("title", "nope").ToUpper().Contains(tr.Replace("_", " ")))
                                         {
-                                            Console.WriteLine(name + " " + tr);
+
                                             alltraits.Add(GetTrait(este.GetAttributeValue("title", "nope"), tr));
                                         }
                                     }
                                 }
                             }
                         }
-
                     }
+
                 }
 
 
 
-                // string skill1 = servanthtml.DocumentNode.SelectSingleNode("//div[@title='1st Skill']").Descendants("div").Count();
+
 
                 HtmlNode profile = null;
                 string[] tentativa2 = name.Split();
@@ -354,8 +395,8 @@ namespace FateDB
                     height = profile.SelectSingleNode("td[4]").InnerText;
                     weight = profile.SelectSingleNode("td[5]").InnerText;
                     gender = profile.SelectSingleNode("td[6]").InnerText;
-                    align = find_alig(profile.SelectSingleNode("td[7]").InnerText);
-                    align2 = find_alig2(profile.SelectSingleNode("td[7]").InnerText);
+                    align = Find_alig(profile.SelectSingleNode("td[7]").InnerText);
+                    align2 = Find_alig2(profile.SelectSingleNode("td[7]").InnerText);
 
                 }
                 if (cl == Servant_Class.BEAST)
@@ -377,21 +418,22 @@ namespace FateDB
             }
 
 
-            _allow_insert = false;
             webClient.Dispose();
             ServantContainer.Save();
         }
 
+        /// <summary>
+        /// Funcao que carrega a lista apartir de um ficheiro XML
+        /// </summary>
         public static void Loadfromfile()
         {
             XElement teste = ServantContainer.Load();
             _all_servants.Clear();
-            _allow_insert = true;
             foreach (XElement ola in teste.Elements())
             {
                 int id = int.Parse(ola.Attribute("Id").Value);
                 string nome = ola.Attribute("Name").Value;
-                Servant_Class cl = find_class(ola.Attribute("Class").Value);
+                Servant_Class cl = Find_class(ola.Attribute("Class").Value);
                 int rarity = int.Parse(ola.Attribute("Rarity").Value);
                 int minatk = int.Parse(ola.Attribute("Minimum_Attack").Value);
                 int maxatk = int.Parse(ola.Attribute("Maximum_Attack").Value);
@@ -402,28 +444,33 @@ namespace FateDB
                 string height = ola.Attribute("Height").Value;
                 string weight = ola.Attribute("Weight").Value;
                 string gender = ola.Attribute("Gender").Value;
-                Alignment alig = find_alig(ola.Attribute("Aligment").Value);
-                Aligment2 alig2 = find_alig2(ola.Attribute("Aligment2").Value);
+                Alignment alig = Find_alig(ola.Attribute("Aligment").Value);
+                Aligment2 alig2 = Find_alig2(ola.Attribute("Aligment2").Value);
                 string npname = ola.Attribute("NPName").Value; ;
-                NPType tipo = getnptype(ola.Attribute("NPType").Value);
-                SkillRank rank = getnprank(ola.Attribute("NPRank").Value);
+                NPType tipo = Getnptype(ola.Attribute("NPType").Value);
+                SkillRank rank = Getnprank(ola.Attribute("NPRank").Value);
                 List<Trait> traits = new List<Trait>();
                 for (int i = 1; i <= Enum.GetValues(typeof(TraitDesc)).Length; i++)
                 {
                     if (ola.Attribute("Trait" + i) != null)
                     {
-                        traits.Add(GetTrait(ola.Attribute("Trait " + i).Value));
+                        traits.Add(GetTrait(ola.Attribute("Trait" + i).Value));
                     }
                 }
 
 
                 _all_servants.Add(new Servant(id, nome, cl, rarity, minatk, maxatk, minhp, maxhp, origin, region, height, weight, gender, alig, alig2, npname, tipo, rank, traits));
             }
-            _allow_insert = false;
+
 
 
         }
 
+        /// <summary>
+        /// Funcao para buscar um servant a partir de um ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static Servant Summon_by_id(int id)
         {
 
@@ -438,6 +485,11 @@ namespace FateDB
             return All_servants.Find(x => x.Id == id);
         }
 
+        /// <summary>
+        /// Funcao que retorna todos os servants de uma classe especifica
+        /// </summary>
+        /// <param name="cl"></param>
+        /// <returns></returns>
         public static List<Servant> Summon_by_Class(Servant_Class cl)
         {
 
@@ -445,6 +497,13 @@ namespace FateDB
             return res;
         }
 
+        /// <summary>
+        /// <para>Funcao que retorna um servant de uma classe especifica</para>
+        /// <para>O Numero e uma seed para buscar o servant e pode ser qualquer numero inteiro</para>
+        /// </summary>
+        /// <param name="cl"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public static Servant Summon_by_Class(Servant_Class cl, int a)
         {
 
@@ -456,6 +515,11 @@ namespace FateDB
             return res[a];
         }
 
+        /// <summary>
+        /// Funcao que devolve uma lista de servants que correspondam a uma lista de classes
+        /// </summary>
+        /// <param name="cl"></param>
+        /// <returns></returns>
         public static List<Servant> Summon_by_Class(List<Servant_Class> cl)
         {
             List<Servant> res = new List<Servant>();
@@ -466,6 +530,13 @@ namespace FateDB
             return res;
         }
 
+        /// <summary>
+        /// <para>Funcao que devolve um servant que corresponda a uma lista de classes</para>
+        /// <para>O Numero e uma seed para buscar o servant e pode ser qualquer numero inteiro</para>
+        /// </summary>
+        /// <param name="cl"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public static Servant Summon_by_Class(List<Servant_Class> cl, int a)
         {
             List<Servant> res = new List<Servant>();

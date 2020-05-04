@@ -63,6 +63,7 @@ namespace FateDB.Database
                 current.Add(new XAttribute("Origin", x.Origin));
                 current.Add(new XAttribute("Region", x.Region));
                 current.Add(new XAttribute("Height", x.Height));
+                current.Add(new XAttribute("Weight", x.Weight));
                 current.Add(new XAttribute("Gender", x.Gender));
                 current.Add(new XAttribute("Aligment", x.Aligment));
                 current.Add(new XAttribute("Aligment2", x.Aligment2));
@@ -71,7 +72,7 @@ namespace FateDB.Database
                 current.Add(new XAttribute("NPRank", x.NPRank));
                 for (int i = 1; i <= x.Alltraits.Count; i++)
                 {
-                    current.Add(new XAttribute("Trait " + i, x.Alltraits[i].trait + " " + x.Alltraits[i].rank));
+                    current.Add(new XAttribute("Trait" + i, x.Alltraits[i-1].trait + " " + x.Alltraits[i-1].rank));
                 }
 
                 xml.Add(current);

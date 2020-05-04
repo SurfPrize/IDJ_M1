@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FateDB
 {
+    /// <summary>
+    /// Classes de um servant
+    /// </summary>
     public enum Servant_Class
     {
         SABER,
@@ -25,6 +28,9 @@ namespace FateDB
         ERROR
     }
 
+    /// <summary>
+    /// 2a parte de um aligment de um servant
+    /// </summary>
     public enum Alignment
     {
         GOOD,
@@ -34,6 +40,9 @@ namespace FateDB
         SUMMER,
         BEAST
     }
+    /// <summary>
+    /// 1a parte de um aligment de um servant
+    /// </summary>
     public enum Aligment2
     {
         CHAOTIC,
@@ -41,6 +50,9 @@ namespace FateDB
         LAWFUL
     }
 
+    /// <summary>
+    /// O tipo de Noble Phantasm de um servant, O noble phantsm e uma habilidade especial que revela a natureza historica de um servant
+    /// </summary>
     public enum NPType
     {
         ANTI_ARMY,
@@ -69,6 +81,10 @@ namespace FateDB
         POETRY,
         SPIRIT
     }
+
+    /// <summary>
+    /// O rank de uma habilidade, que varia entre E e EX, sendo EX o melhor rank
+    /// </summary>
     public enum SkillRank
     {
         EX,
@@ -79,6 +95,9 @@ namespace FateDB
         E
     }
 
+    /// <summary>
+    /// Descricao de uma trait, isto pode ser utilizado para dar passivas especificas a servants que tenham estas passivas
+    /// </summary>
     public enum TraitDesc
     {
         MADNESS_ENHANCMENT,
@@ -94,6 +113,9 @@ namespace FateDB
         SELFRESTORATION
     }
 
+    /// <summary>
+    /// Tipos de ataques que um servant pode usar
+    /// </summary>
     public enum AttackType
     {
         ATTACK,
