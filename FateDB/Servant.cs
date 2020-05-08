@@ -66,6 +66,10 @@ namespace FateDB
                 {
                     _atk = 0;
                 }
+                else
+                {
+                    _atk = value;
+                }
             }
         }
         /// <summary>
@@ -95,10 +99,11 @@ namespace FateDB
             get => _hp;
             set
             {
-                if (value < 0)
+                if (value <= 0)
                 {
                     //morrer
                     _alive = false;
+                    _hp = 0;
                 }
 
                 if (value > _maxcurrenthp)
@@ -222,86 +227,132 @@ namespace FateDB
         /// <summary>
         /// Ataques da personagem para o turno
         /// </summary>
-        public AttackType[] atk_definido = new AttackType[3];
+        public List<AttackType> atk_definido;
 
+        //Sistema antigo, era lixo
         /// <summary>
         /// Metodo para devolver 5 cartas, para o jogador escolher.
         /// </summary>
         /// <returns></returns>
-        public List<AttackType> Drawcards(int amount)
+        //public List<AttackType> Drawcards(int amount)
+        //{
+        //    Random r = new Random();
+        //    List<AttackType> resultado = new List<AttackType>();
+        //    for (int i = 0; i < amount; i++)
+        //    {
+        //        resultado.Add(cards[r.Next(0, cards.Count - 1)]);
+        //    }
+        //    return resultado;
+        //}
+
+
+        //public void Pick_Cards(int amount)
+        //{
+        //    Random r = new Random();
+        //    List<AttackType> res = Drawcards(amount);
+        //    List<AttackType> res_display = new List<AttackType>(res);
+        //    List<int> order = new List<int>();
+
+        //    for (int i = 0; i < amount; i++)
+        //    {
+        //        foreach (AttackType este in res_display)
+        //        {
+        //            Console.WriteLine(este + " ");
+        //        }
+        //        Console.WriteLine("ATTACK " + (i + 1));
+        //        order.Add(int.Parse(Console.ReadLine()) - 1);
+        //        res_display.RemoveAt(order[i]);
+        //    }
+        //    CardPicker(amount, res, order);
+        //}
+
+        //public List<AttackType> CardPicker(int amount, List<AttackType> possiveis_escolhas, List<int> ord)
+        //{
+        //    Random r = new Random();
+        //    List<AttackType> resultado = new List<AttackType>();
+        //    for (int i = 0; i < ord.Count; i++)
+        //    {
+        //        resultado.Add(possiveis_escolhas[ord[i]]);
+        //    }
+        //    return resultado;
+        //}
+
+
+
+        //public List<AttackType> CardPickerAI(int amount, List<AttackType> possiveis_escolhas)
+        //{
+        //    Random r = new Random();
+        //    List<AttackType> resultado = new List<AttackType>();
+        //    for (int i = 0; i < amount; i++)
+        //    {
+        //        resultado.Add(possiveis_escolhas[r.Next(0, possiveis_escolhas.Count - 1)]);
+        //    }
+        //    return resultado;
+        //}
+
+        //public void Pick_Cards_AI(int amount)
+        //{
+        //    Random r = new Random();
+        //    List<AttackType> res = Drawcards(amount);
+
+        //    CardPickerAI(amount, res);
+        //}
+
+        ///// <summary>
+        ///// Metodo para definir as cartas para o proximo turno.
+        ///// <para>Este metodo so define as cartas, sem nenhuma base</para>
+        ///// </summary>
+        ///// <param name="first"></param>
+        ///// <param name="second"></param>
+        ///// <param name="third"></param>
+        //public void Set_cards(int first, int second, int third)
+        //{
+        //    cards.Add((AttackType)third); cards.Add((AttackType)third); cards.Add((AttackType)third);
+        //    atk_definido = new AttackType[3] { (AttackType)first, (AttackType)second, (AttackType)third };
+        //}
+
+
+        public AttackType ParseCardbyList(int n)
         {
-            Random r = new Random();
-            List<AttackType> resultado = new List<AttackType>();
-            for (int i = 0; i < amount; i++)
+            return cards[n - 1];
+        }
+        public AttackType ParseCardbyEnum(int n)
+        {
+            try
             {
-                resultado.Add(cards[r.Next(0, cards.Count - 1)]);
+                return (AttackType)n;
             }
-            return resultado;
+            catch
+            {
+                Console.WriteLine("Valor fora de range, retornando, attack");
+                return AttackType.ATTACK;
+            }
         }
 
-        public void Pick_Cards(int amount)
+        public void Pick_Cards(int turnos)
         {
-            Random r = new Random();
-            List<AttackType> res = Drawcards(amount);
-            List<AttackType> res_display = new List<AttackType>(res);
-            List<int> order = new List<int>();
+            atk_definido = new List<AttackType>();
 
-            for (int i = 0; i < amount; i++)
+
+            for (int i = 0; i < turnos; i++)
             {
-                foreach (AttackType este in res_display)
+                foreach (AttackType este in cards)
                 {
-                    Console.WriteLine(este + " ");
+                    Console.WriteLine(este);
                 }
-                Console.WriteLine("ATTACK " + (i + 1));
-                order.Add(int.Parse(Console.ReadLine()) - 1);
-                res_display.RemoveAt(order[i]);
+                atk_definido.Add(ParseCardbyList(int.Parse(Console.ReadLine())));
             }
-            CardPicker(amount, res, order);
         }
 
-        public List<AttackType> CardPicker(int amount, List<AttackType> possiveis_escolhas, List<int> ord)
+        public void Pick_Cards_AI(int turnos)
         {
             Random r = new Random();
-            List<AttackType> resultado = new List<AttackType>();
-            for (int i = 0; i < ord.Count; i++)
+            atk_definido = new List<AttackType>();
+
+            for (int i = 0; i < turnos; i++)
             {
-                resultado.Add(possiveis_escolhas[ord[i]]);
+                atk_definido.Add(ParseCardbyList(r.Next(1, 4)));
             }
-            return resultado;
-        }
-
-
-
-        public List<AttackType> CardPickerAI(int amount, List<AttackType> possiveis_escolhas)
-        {
-            Random r = new Random();
-            List<AttackType> resultado = new List<AttackType>();
-            for (int i = 0; i < amount; i++)
-            {
-                resultado.Add(possiveis_escolhas[r.Next(0, possiveis_escolhas.Count - 1)]);
-            }
-            return resultado;
-        }
-
-        public void Pick_Cards_AI(int amount)
-        {
-            Random r = new Random();
-            List<AttackType> res = Drawcards(amount);
-
-            CardPickerAI(amount, res);
-        }
-
-        /// <summary>
-        /// Metodo para definir as cartas para o proximo turno.
-        /// <para>Este metodo so define as cartas, sem nenhuma base</para>
-        /// </summary>
-        /// <param name="first"></param>
-        /// <param name="second"></param>
-        /// <param name="third"></param>
-        public void Set_cards(int first, int second, int third)
-        {
-            cards.Add((AttackType)third); cards.Add((AttackType)third); cards.Add((AttackType)third);
-            atk_definido = new AttackType[3] { (AttackType)first, (AttackType)second, (AttackType)third };
         }
 
         /// <summary>
