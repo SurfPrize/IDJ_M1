@@ -12,8 +12,20 @@ namespace FateDB.Database
 {
     public class ServantContainer
     {
+        /// <summary>
+        /// path do projeto
+        /// </summary>
         public static string path = @"C:\Users\Utilizador\Documents\FateDB\IDJ_M1\teste";
+
+        /// <summary>
+        /// nome do ficheiro
+        /// </summary>
         public static string dbname = @"\meme.xml";
+
+        /// <summary>
+        /// Carregar os default servants apartir de um ficheiro, mais rapido do que usar o UpdateList
+        /// </summary>
+        /// <returns></returns>
         public static XElement Load()
         {
 
@@ -23,6 +35,10 @@ namespace FateDB.Database
 
         }
 
+
+        /// <summary>
+        /// Guardar a lista All_servants para um ficheiro
+        /// </summary>
         public static void Save()
         {
 

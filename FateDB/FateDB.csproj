@@ -65,6 +65,7 @@
     <Compile Include="Database\ServantContainer.cs" />
     <Compile Include="Database\ThroneOfHeroes.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="IUnit.cs" />
     <Compile Include="Master.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -13,7 +13,7 @@ namespace FateDB
     {
 
         
-        private string _name = "NO NAME";
+        
         /// <summary>
         /// Nome da Personagem
         /// </summary>
@@ -31,7 +31,18 @@ namespace FateDB
                 }
             }
         }
+        private string _name = "NO NAME";
 
+        /// <summary>
+        /// Regiao da personagem
+        /// </summary>
+        public string Master_region;
+
+        /// <summary>
+        /// Ver se a personagem e de uma classe extra
+        /// </summary>
+        /// <param name="serv"></param>
+        /// <returns></returns>
         private Servant Parse_servant(Servant serv)
         {
             switch (serv.Class)
@@ -53,8 +64,14 @@ namespace FateDB
             }
             return serv;
         }
-        public string Master_region;
 
+        
+        /// <summary>
+        /// Construtor da classe mestre
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="region"></param>
+        /// <param name="serv"></param>
         public Master(string name, string region, Servant serv) : base(serv)
         {
             serv = Parse_servant(serv);
@@ -62,6 +79,10 @@ namespace FateDB
             Master_region = region;
         }
 
+        /// <summary>
+        /// construtor da classe mestre
+        /// </summary>
+        /// <param name="serv"></param>
         public Master(Servant serv) : base(serv)
         {
             serv = Parse_servant(serv);

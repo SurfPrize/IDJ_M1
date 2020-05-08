@@ -13,7 +13,7 @@ namespace FateDB
         /// </summary>
         /// <param name="offense"></param>
         /// <param name="defense"></param>
-        public static void Battle(Servant offense, Servant defense, int turns)
+        public static void Battle(IUnit offense, IUnit defense, int turns)
         {
 
             if (!offense.IsAlive || !defense.IsAlive)
@@ -26,7 +26,7 @@ namespace FateDB
             offense.Pick_Cards(turns);
             defense.Pick_Cards_AI(turns);
 
-            for (int i = 0; i < offense.atk_definido.Count(); i++)
+            for (int i = 0; i < offense.Atk_definido.Count(); i++)
             {
                 if (!offense.IsAlive || !defense.IsAlive)
                 {
@@ -34,13 +34,13 @@ namespace FateDB
                     return;
                 }
 
-                if (offense.atk_definido[i] == AttackType.COUNTER && defense.atk_definido[i] == AttackType.COUNTER)
+                if (offense.Atk_definido[i] == AttackType.COUNTER && defense.Atk_definido[i] == AttackType.COUNTER)
                 {
                     //nada acontece
                     Console.WriteLine("Both defended");
 
                 }
-                else if (offense.atk_definido[i] == defense.atk_definido[i])
+                else if (offense.Atk_definido[i] == defense.Atk_definido[i])
                 {
                     if (r.Next(0, 2) == 1)
                     {
@@ -59,10 +59,10 @@ namespace FateDB
                 else
                 {
                     //aqui calcula quem apanha base no ataque que escolheram
-                    switch (offense.atk_definido[i])
+                    switch (offense.Atk_definido[i])
                     {
                         case AttackType.ATTACK:
-                            if (defense.atk_definido[i] == AttackType.SPELL)
+                            if (defense.Atk_definido[i] == AttackType.SPELL)
                             {
                                 AgressorBonusDamage(offense, defense);
                             }
@@ -73,7 +73,7 @@ namespace FateDB
                             }
                             break;
                         case AttackType.COUNTER:
-                            if (defense.atk_definido[i] == AttackType.ATTACK)
+                            if (defense.Atk_definido[i] == AttackType.ATTACK)
                             {
                                 Blockeddamage(offense, defense);
                                 AgressorBonusDamage(offense, defense);
@@ -84,7 +84,7 @@ namespace FateDB
                             }
                             break;
                         case AttackType.SPELL:
-                            if (defense.atk_definido[i] == AttackType.COUNTER)
+                            if (defense.Atk_definido[i] == AttackType.COUNTER)
                             {
                                 AgressorBonusDamage(offense, defense);
                             }
@@ -98,21 +98,36 @@ namespace FateDB
             }
         }
 
-        public static void Normaldamage(Servant dealer, Servant damaged)
+        /// <summary>
+        /// Dano normal, sem modificadores
+        /// </summary>
+        /// <param name="dealer"></param>
+        /// <param name="damaged"></param>
+        public static void Normaldamage(IUnit dealer, IUnit damaged)
         {
             Random r = new Random();
             damaged.Hp -= (int)Math.Round(dealer.Atk / 4f * (r.Next(94, 105) / 100f));
             Console.WriteLine(dealer.Name + " damages " + damaged.Name + " , it still haves " + damaged.Hp);
         }
 
-        public static void Blockeddamage(Servant dealer, Servant damaged)
+        /// <summary>
+        /// Dano occurido ao defender
+        /// </summary>
+        /// <param name="dealer"></param>
+        /// <param name="damaged"></param>
+        public static void Blockeddamage(IUnit dealer, IUnit damaged)
         {
             Random r = new Random();
             damaged.Hp -= (int)Math.Round(dealer.Atk / 4f * (r.Next(94, 105) / 100f) * 0.1f);
             Console.WriteLine(dealer.Name + " gets blocked by " + damaged.Name + " , it still haves " + damaged.Hp);
         }
 
-        public static void AgressorBonusDamage(Servant dealer, Servant damaged)
+        /// <summary>
+        /// Dano com modificador de agressor
+        /// </summary>
+        /// <param name="dealer"></param>
+        /// <param name="damaged"></param>
+        public static void AgressorBonusDamage(IUnit dealer, IUnit damaged)
         {
             Random r = new Random();
             damaged.Hp -= (int)Math.Round(dealer.Atk / 4 * (r.Next(94, 105) / 100) * 1.05f);

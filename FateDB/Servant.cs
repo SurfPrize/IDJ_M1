@@ -11,7 +11,7 @@ namespace FateDB
     /// <summary>
     /// Personagem do jogo
     /// </summary>
-    public class Servant
+    public class Servant: IUnit
     {
         /// <summary>
         /// Nome do personagem
@@ -227,7 +227,7 @@ namespace FateDB
         /// <summary>
         /// Ataques da personagem para o turno
         /// </summary>
-        public List<AttackType> atk_definido;
+        public List<AttackType> Atk_definido { get; set; }
 
         //Sistema antigo, era lixo
         /// <summary>
@@ -331,7 +331,7 @@ namespace FateDB
 
         public void Pick_Cards(int turnos)
         {
-            atk_definido = new List<AttackType>();
+            Atk_definido = new List<AttackType>();
 
 
             for (int i = 0; i < turnos; i++)
@@ -340,18 +340,18 @@ namespace FateDB
                 {
                     Console.WriteLine(este);
                 }
-                atk_definido.Add(ParseCardbyList(int.Parse(Console.ReadLine())));
+                Atk_definido.Add(ParseCardbyList(int.Parse(Console.ReadLine())));
             }
         }
 
         public void Pick_Cards_AI(int turnos)
         {
             Random r = new Random();
-            atk_definido = new List<AttackType>();
+            Atk_definido = new List<AttackType>();
 
             for (int i = 0; i < turnos; i++)
             {
-                atk_definido.Add(ParseCardbyList(r.Next(1, 4)));
+                Atk_definido.Add(ParseCardbyList(r.Next(1, 4)));
             }
         }
 

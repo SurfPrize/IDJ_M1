@@ -13,14 +13,12 @@ namespace FateDB
     public static class ThroneOfHeroes
     {
 
-
-        private static List<Servant> _summoned_servants = new List<Servant>();
+        
         private static List<Servant> _all_servants = new List<Servant>();
         /// <summary>
         /// Todos os default servants existentes
         /// </summary>
         public static List<Servant> All_servants => _all_servants;
-        public static List<Servant> Summoned_servants => _summoned_servants;
 
 
 
