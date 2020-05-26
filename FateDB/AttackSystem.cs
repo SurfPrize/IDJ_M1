@@ -107,7 +107,7 @@ namespace FateDB
         {
             Random r = new Random();
             damaged.Hp -= (int)Math.Round(dealer.Atk / 4f * (r.Next(94, 105) / 100f));
-            Console.WriteLine(dealer.Name + " damages " + damaged.Name + " , it still haves " + damaged.Hp);
+            Console.WriteLine(dealer.Name + " damages " + damaged.Name + " , it still has " + damaged.Hp);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace FateDB
         {
             Random r = new Random();
             damaged.Hp -= (int)Math.Round(dealer.Atk / 4f * (r.Next(94, 105) / 100f) * 0.1f);
-            Console.WriteLine(dealer.Name + " gets blocked by " + damaged.Name + " , it still haves " + damaged.Hp);
+            Console.WriteLine(dealer.Name + " gets blocked by " + damaged.Name + " , it still has " + damaged.Hp);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace FateDB
         {
             Random r = new Random();
             damaged.Hp -= (int)Math.Round(dealer.Atk / 4 * (r.Next(94, 105) / 100) * 1.05f);
-            Console.WriteLine(dealer.Name + " damages " + damaged.Name + " , it still haves " + damaged.Hp);
+            Console.WriteLine(dealer.Name + " damages " + damaged.Name + " , it still has " + damaged.Hp);
         }
 
     }

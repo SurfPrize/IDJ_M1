@@ -13,8 +13,11 @@ namespace FateDB
 
             ThroneOfHeroes.Loadfromfile();
             Master teste = new Master(ThroneOfHeroes.Summon_by_Class(Servant_Class.AVENGER, 5));
-            Console.WriteLine(teste.ToString()+ "\n "+ teste.Atk);
             Servant teste2 = ThroneOfHeroes.Summon_by_Class(Servant_Class.ARCHER, 4);
+            teste.Lvl = teste.Maxlvl / 2;
+            teste2.Lvl = teste2.Maxlvl / 2;
+            Console.WriteLine(teste.ToString());
+            Console.WriteLine(teste2.ToString());
             while (teste.IsAlive && teste2.IsAlive)
             {
                 AttackSystem.Battle(teste, teste2, 3);

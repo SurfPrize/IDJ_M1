@@ -11,7 +11,7 @@ namespace FateDB
     /// <summary>
     /// Personagem do jogo
     /// </summary>
-    public class Servant: IUnit
+    public class Servant : IUnit
     {
         /// <summary>
         /// Nome do personagem
@@ -40,10 +40,17 @@ namespace FateDB
             set
             {
                 if (value > Maxlvl)
-                    value = Maxlvl;
+                {
+
+                    _lvl = Maxlvl;
+                }
                 else if (value < 1)
                 {
                     _lvl = 1;
+                }
+                else
+                {
+                    _lvl = value;
                 }
                 _maxcurrentatk = _minatk + (_maxatk / Maxlvl * value);
                 _maxcurrenthp = _minhp + (_maxatk / Maxlvl * value);
@@ -51,7 +58,7 @@ namespace FateDB
                 Atk = _maxcurrentatk;
             }
         }
-        private int _lvl = 1;
+        private int _lvl;
 
         private int _atk;
         /// <summary>
@@ -454,7 +461,7 @@ namespace FateDB
             _nptype = NPType.ANTI_ARMY;
             _rank = SkillRank.D;
             Maxlvl = 100;
-            Lvl = 1;
+            Lvl = 2;
         }
 
         public override string ToString()

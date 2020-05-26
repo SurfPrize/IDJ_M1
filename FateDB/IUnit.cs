@@ -8,7 +8,9 @@ namespace FateDB
 {
     public interface IUnit
     {
-
+        /// <summary>
+        /// Nome da Unidade
+        /// </summary>
         string Name { get; }
         /// <summary>
         /// Classe da Unidade
